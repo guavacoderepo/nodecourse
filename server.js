@@ -2,11 +2,12 @@ const express = require("express");
 const dotenv = require("dotenv");
 const connectMongo = require("./config/database");
 const errorHandler = require("./middleware/error");
-// import routers
-const bootcamps = require("./routes/bootcomps");
 
 // load dotenv variables
 dotenv.config({ path: "./config/config.env" });
+
+// import routers
+const bootcamps = require("./routes/bootcomps");
 
 // connect to mongo database
 connectMongo();
