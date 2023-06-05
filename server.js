@@ -1,7 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const connectMongo = require("./config/database");
-
+const errorHandler = require("./middleware/error");
 // import routers
 const bootcamps = require("./routes/bootcomps");
 
@@ -15,10 +15,13 @@ connectMongo();
 const app = express();
 
 // middlewares
-app.use(express.json())
+app.use(express.json());
 
 // mount routs
 app.use("/api/v1/bootcamp", bootcamps);
+
+// error middleware
+app.use(errorHandler);
 
 // set port
 const port = process.env.PORT || 8008;

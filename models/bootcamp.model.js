@@ -53,6 +53,7 @@ const BootcampSchema = new mongoose.Schema(
     },
 
     role: {
+      type: String,
       enum: ["staff", "customer"],
     },
 

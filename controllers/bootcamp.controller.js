@@ -1,16 +1,34 @@
 const Bootcamp = require("../models/bootcamp.model");
+const ErrorResponse = require("../utils/errorResponses");
 // @desc    Get all bootcamps
 // @route   GET /api/v1/bootcamps
 // @access  Public
-exports.getBootcamps = (req, res, next) => {
-  res.status(200).json({ status: true, msg: "get all bootcamps" });
+exports.getBootcamps = async (req, res, next) => {
+  try {
+    const bootcamp = await Bootcamp.find();
+
+    res.status(200).json({ status: true, data: bootcamp });
+  } catch (err) {
+    next(err);
+  }
 };
 
 // @desc    Get all bootcamps
 // @route   GET /api/v1/bootcamps/:id
 // @access  Public
-exports.getBootcamp = (req, res, next) => {
-  res.status(200).json({ status: true, msg: "get a bootcamp" });
+exports.getBootcamp = async (req, res, next) => {
+  try {
+    const bootcamp = await Bootcamp.findById(req.params.id);
+
+    if (!bootcamp) {
+      return next(new ErrorResponse(`id: ${err.value} not found`, 404));
+    }
+
+    res.status(200).json({ status: true, data: bootcamp });
+  } catch (err) {
+    next(err);
+    // next(new ErrorResponse(`Bootcamp not found with id ${req.params.id}`, 404));
+  }
 };
 
 // @desc    Create all bootcamps
@@ -18,14 +36,17 @@ exports.getBootcamp = (req, res, next) => {
 // @access  Public
 exports.createBootcamp = async (req, res, next) => {
   try {
-    console.log(req.body);
-    const bootcamp = await Bootcamp.create(req.body);
+    const url = req.body.website;
 
-    console.log(bootcamp);
+    if (!url.includes("http://") || !url.includes("https://")) {
+      req.body.website = `https://${url}`;
+    }
+
+    const bootcamp = await Bootcamp.create(req.body);
 
     res.status(200).json({ status: true });
   } catch (err) {
-    res.status(400).json({ status: false, msg: `${err}` });
+    next(err);
   }
 };
 
