@@ -3,7 +3,7 @@ const ErrorResponse = require("../utils/errorResponses");
 const { object } = require("webidl-conversions");
 
 const errorHandler = (err, req, res, next) => {
-  let error = { ...err };
+  let error = { ...err};
 
   error.message = err.message;
 

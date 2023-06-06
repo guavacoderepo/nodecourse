@@ -5,8 +5,36 @@ const ErrorResponse = require("../utils/errorResponses");
 // @route   GET /api/v1/bootcamps
 // @access  Public
 exports.getBootcamps = async (req, res, next) => {
+  let query;
+
+  // spread operator
+  const reqQuery = { ...req.query };
+
+  // fields to remove
+  const removeFields = ["select"];
+
+  // loop over and remove fields
+  removeFields.forEach((param) => delete reqQuery[param]);
+
+  // stringify query
+  let queryStr = JSON.stringify(reqQuery);
+
+  // create operator for gt, gte, lt, lte, in
+  queryStr = queryStr.replace(
+    /\b(gt|gte|lt|lte|in)\b/g,
+    (match) => `$${match}`
+  );
+
   try {
-    const bootcamp = await Bootcamp.find(req.query);
+    // query mongo
+    query = Bootcamp.find(JSON.parse(queryStr));
+
+    if (req.query.select) {
+      const fields = req.query.select.split(",").join(" ");
+
+      query.select(fields);
+    }
+    const bootcamp = await query;
 
     res.status(200).json({ status: true, data: bootcamp });
   } catch (err) {
